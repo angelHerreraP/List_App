@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:meddi/Presentation/Auth/login.dart';
+
 
 class Splashscreen extends StatefulWidget {
   @override
@@ -26,9 +28,7 @@ class _SplashscreenState extends State<Splashscreen> {
     return Scaffold(
       body: Center(
         child: Image.asset(
-          isDarkMode
-              ? 'Assets/Images/Icon.png' // Imagen para modo oscuro
-              : 'Assets/Images/Icon.png', // Imagen para modo claro
+          'Assets/Images/Icon.png', // Imagen para modo claro
           fit: BoxFit.cover,
           width: 200,
           height: 200,
