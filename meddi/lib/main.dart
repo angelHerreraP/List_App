@@ -15,4 +15,4 @@ class MyApp extends StatelessWidget {
       home: Splashscreen(), // Inicia en SplashScreen
     );
   }
-}
+} 

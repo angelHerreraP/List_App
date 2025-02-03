@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meddi/Presentation/Auth/login.dart';
 
-
 class Splashscreen extends StatefulWidget {
   @override
   State<Splashscreen> createState() => _SplashscreenState();
