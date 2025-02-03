@@ -11,17 +11,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  String? selectedDay;
-  String? selectedMonth;
-  String? selectedYear;
-
-  final List<String> days =
-      List.generate(31, (index) => (index + 1).toString());
-  final List<String> months =
-      List.generate(12, (index) => (index + 1).toString());
-  final List<String> years =
-      List.generate(101, (index) => (2023 - index).toString());
 
   @override
   Widget build(BuildContext context) {
@@ -120,6 +111,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                   ),
+
+                  //Text Space para el celular
+                  Container(
+                    width: 250,
+                    height: 50,
+                    margin: const EdgeInsets.only(top: 20),
+                    child: Center(
+                      child: TextFormField(
+                        controller: _passwordController,
+                        decoration: const InputDecoration(
+                          hintText: 'Ingresa tu Celular',
+                          prefixIcon: Icon(
+                            Icons.phone,
+                          ),
+                        ),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor, ingresa tu Numero Celular';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ),
                   Container(
                     width: 250,
                     height: 50,
@@ -141,62 +157,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           return null;
                         },
                       ),
-                    ),
-                  ),
-                  // Dropdown para día, mes y año
-                  Container(
-                    width: 250,
-                    height: 50,
-                    margin: const EdgeInsets.only(top: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        DropdownButton<String>(
-                          value: selectedDay,
-                          hint: const Text('Día'),
-                          items: days.map((String day) {
-                            return DropdownMenuItem<String>(
-                              value: day,
-                              child: Text(day),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedDay = newValue!;
-                            });
-                          },
-                        ),
-                        DropdownButton<String>(
-                          value: selectedMonth,
-                          hint: const Text('Mes'),
-                          items: months.map((String month) {
-                            return DropdownMenuItem<String>(
-                              value: month,
-                              child: Text(month),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedMonth = newValue!;
-                            });
-                          },
-                        ),
-                        DropdownButton<String>(
-                          value: selectedYear,
-                          hint: const Text('Año'),
-                          items: years.map((String year) {
-                            return DropdownMenuItem<String>(
-                              value: year,
-                              child: Text(year),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedYear = newValue!;
-                            });
-                          },
-                        ),
-                      ],
                     ),
                   ),
                   // Botón para registrarse
