@@ -12,12 +12,14 @@ class HospitalBloc extends Bloc<HospitalEvent, HospitalState> {
 
   Future<void> _onFetchHospitals(
       FetchHospitalsEvent event, Emitter<HospitalState> emit) async {
+    emit(HospitalLoading());
     try {
-      emit(HospitalLoading());
       final hospitals = await repository.getHospitals();
+      print("Se encontraron ${hospitals.length} hospitales."); // Debugging
       emit(HospitalLoaded(hospitals));
     } catch (e) {
-      emit(HospitalError("Error al cargar hospitales: ${e.toString()}"));
+      print("Error en HospitalBloc: $e"); // Debugging
+      emit(HospitalError("Error al cargar hospitales: $e"));
     }
   }
 }

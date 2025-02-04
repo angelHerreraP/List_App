@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:meddi/core/storage/secure_storage.dart'; // Importamos SecureStorage
+import 'package:meddi/core/storage/secure_storage.dart';
 import 'package:meddi/domain/models/hospitals.dart';
 
 class HospitalRemoteDataSource {
@@ -10,19 +10,18 @@ class HospitalRemoteDataSource {
       SecureStorage(); // Instancia de SecureStorage
 
   Future<List<Hospital>> fetchHospitals() async {
+    final String? token = await secureStorage.getToken();
+
+    if (token == null) {
+      throw Exception("Token no encontrado, por favor inicia sesión.");
+    }
+
     final Uri url = Uri.parse(
         "$baseUrl/hospital/get/all?page=1&rowsPerPage=10&lat=20.7244704&long=-103.397476&estadoCode=JC");
 
-    // Recuperamos el token almacenado
-    final String? token = await secureStorage.getToken();
-
-    if (token == null || token.isEmpty) {
-      throw Exception("Error: No se encontró un token almacenado.");
-    }
-
     final response = await http.get(url, headers: {
       "Content-Type": "application/json",
-      "Authorization": "Bearer $token" // Insertamos el token recuperado
+      "Authorization": "Bearer $token",
     });
 
     if (response.statusCode == 200) {
