@@ -1,6 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:meddi/Presentation/Auth/register.dart';
+import 'package:meddi/Presentation/Pages/App.dart';
+import 'package:meddi/core/storage/secure_storage.dart';
+import 'package:meddi/data/datasource/auth_remote_datasource.dart';
+import 'package:meddi/data/repositories/auth_repository_impl.dart';
+import 'package:meddi/domain/usecases/login_user.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,12 +19,45 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
+  bool _isLoading = false; // Para mostrar el loading en el botón
 
-  void _login() {
+  // Inyectar dependencias
+  final LoginUser loginUser = LoginUser(
+    AuthRepositoryImpl(
+      AuthRemoteDataSource(),
+      SecureStorage(),
+    ),
+  );
+
+  /// Función para manejar el login
+  void _login() async {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Iniciando sesión...')),
-      );
+      setState(() {
+        _isLoading = true; // Mostrar loading en el botón
+      });
+
+      try {
+        await loginUser.call(
+          _emailController.text.trim(),
+          _passwordController.text.trim(),
+        );
+
+        // Si el login es exitoso, navegar a HomePage
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const App()),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: ${e.toString()}")),
+        );
+      } finally {
+        setState(() {
+          _isLoading = false; // Ocultar loading
+        });
+      }
     }
   }
 
@@ -74,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   _buildEmailField(),
                   _buildPasswordField(),
                   _buildLoginButton(),
-                  _buildRegisterText(), // Ahora el texto de registro está separado
+                  _buildRegisterText(),
                 ],
               ),
             ),
@@ -84,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  /// Widget para el campo de email
+  /// Campo de email
   Widget _buildEmailField() {
     return Container(
       width: 250,
@@ -111,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  /// Widget para el campo de contraseña (Separado)
+  /// Campo de contraseña
   Widget _buildPasswordField() {
     return Container(
       width: 250,
@@ -149,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  /// Widget para el botón de "Iniciar Sesión"
+  /// Botón de inicio de sesión con loading
   Widget _buildLoginButton() {
     return Container(
       margin: const EdgeInsets.only(top: 30),
@@ -157,23 +195,27 @@ class _LoginScreenState extends State<LoginScreen> {
         width: 250,
         height: 50,
         child: ElevatedButton(
-          onPressed: _login,
+          onPressed:
+              _isLoading ? null : _login, // Desactivar botón si está cargando
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.black,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
           ),
-          child: const Text(
-            'Iniciar sesión',
-            style: TextStyle(color: Colors.white),
-          ),
+          child: _isLoading
+              ? const CircularProgressIndicator(
+                  color: Colors.white) // Mostrar loading
+              : const Text(
+                  'Iniciar sesión',
+                  style: TextStyle(color: Colors.white),
+                ),
         ),
       ),
     );
   }
 
-  /// Widget para el mensaje y botón "Regístrate" (Separado)
+  /// Mensaje y botón "Regístrate"
   Widget _buildRegisterText() {
     return Container(
       margin: const EdgeInsets.only(top: 20),
@@ -185,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
             TextSpan(
               text: 'Regístrate',
               style: const TextStyle(
-                color: Colors.white,
+                color: Colors.blue,
                 fontWeight: FontWeight.bold,
               ),
               recognizer: TapGestureRecognizer()..onTap = _navigateToRegister,
