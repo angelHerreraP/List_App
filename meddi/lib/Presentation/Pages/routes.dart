@@ -11,8 +11,8 @@ class Routes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> myList = [
-      const Center(child: Text('Pantalla de Inicio')), // Página de inicio
       HospitalScreen(), // Pantalla de Hospitales
+      const Center(child: Text('Pantalla de Mapa')), // Página de inicio
       const Center(child: Text('Pantalla de Contacto')), // Pantalla de Contacto
     ];
     return myList[index];
