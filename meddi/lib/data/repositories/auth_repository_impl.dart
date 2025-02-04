@@ -12,7 +12,12 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> login(String username, String password) async {
     try {
       final token = await remoteDataSource.loginUser(username, password);
-      await secureStorage.saveToken(token);
+
+      if (token.isNotEmpty) {
+        await secureStorage.saveToken(token); // ✅ Guarda el token correctamente
+      } else {
+        throw Exception("Error: No se recibió un token válido.");
+      }
     } catch (e) {
       throw Exception("Error al iniciar sesión: $e");
     }
@@ -25,8 +30,12 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<bool> isLoggedIn() async {
-    final token = await secureStorage.getToken();
-    return token != null;
+    try {
+      final token = await secureStorage.getToken();
+      return token != null && token.isNotEmpty; // ✅ Verifica si el token existe
+    } catch (e) {
+      return false; // En caso de error, asumimos que el usuario no está logueado
+    }
   }
 
   @override

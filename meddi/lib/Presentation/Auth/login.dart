@@ -5,7 +5,6 @@ import 'package:meddi/Presentation/Pages/App.dart';
 import 'package:meddi/core/storage/secure_storage.dart';
 import 'package:meddi/data/datasource/auth_remote_datasource.dart';
 import 'package:meddi/data/repositories/auth_repository_impl.dart';
-import 'package:meddi/domain/usecases/login_user.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,30 +18,61 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
-  bool _isLoading = false; // Para mostrar el loading en el botón
+  bool _isLoading = false;
 
   // Inyectar dependencias
-  final LoginUser loginUser = LoginUser(
-    AuthRepositoryImpl(
-      AuthRemoteDataSource(),
-      SecureStorage(),
-    ),
+  final AuthRepositoryImpl authRepository = AuthRepositoryImpl(
+    AuthRemoteDataSource(),
+    SecureStorage(),
   );
+
+  final SecureStorage secureStorage = SecureStorage();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  /// Verifica si el usuario ya está autenticado al abrir la app
+  void _checkLoginStatus() async {
+    final bool loggedIn = await authRepository.isLoggedIn();
+    if (loggedIn && mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const App()),
+      );
+    }
+  }
 
   /// Función para manejar el login
   void _login() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
-        _isLoading = true; // Mostrar loading en el botón
+        _isLoading = true;
       });
 
       try {
-        await loginUser.call(
-          _emailController.text.trim(),
-          _passwordController.text.trim(),
-        );
+        final username = _emailController.text.trim();
+        final password = _passwordController.text.trim();
 
-        // Si el login es exitoso, navegar a HomePage
+        // 🔹 Validar antes de enviar la solicitud
+        if (username.isEmpty || !username.contains('@')) {
+          throw Exception("El usuario debe ser un email válido.");
+        }
+        if (password.isEmpty) {
+          throw Exception("La contraseña no puede estar vacía.");
+        }
+
+        print("📧 Enviando login con usuario: '$username'");
+        print(
+            "🔑 Enviando password: '${password.isNotEmpty ? '***' : 'VACÍA'}'");
+
+        await authRepository.login(username, password);
+
+        final String? token = await secureStorage.getToken();
+        print("🔹 Token almacenado: $token");
+
         if (mounted) {
           Navigator.pushReplacement(
             context,
@@ -55,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       } finally {
         setState(() {
-          _isLoading = false; // Ocultar loading
+          _isLoading = false;
         });
       }
     }
@@ -195,8 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
         width: 250,
         height: 50,
         child: ElevatedButton(
-          onPressed:
-              _isLoading ? null : _login, // Desactivar botón si está cargando
+          onPressed: _isLoading ? null : _login,
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.black,
             shape: RoundedRectangleBorder(
@@ -204,8 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           child: _isLoading
-              ? const CircularProgressIndicator(
-                  color: Colors.white) // Mostrar loading
+              ? const CircularProgressIndicator(color: Colors.white)
               : const Text(
                   'Iniciar sesión',
                   style: TextStyle(color: Colors.white),

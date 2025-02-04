@@ -10,12 +10,12 @@ class SecureStorage {
     await _storage.write(key: _tokenKey, value: token);
   }
 
-  /// Obtiene el token JWT almacenado
+  /// Obtiene el token almacenado
   Future<String?> getToken() async {
     return await _storage.read(key: _tokenKey);
   }
 
-  /// Elimina el token JWT (Logout)
+  /// Elimina el token cuando el usuario cierra sesión
   Future<void> deleteToken() async {
     await _storage.delete(key: _tokenKey);
   }
