@@ -21,13 +21,11 @@ class HospitalScreen extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             } else if (state is HospitalLoaded) {
               return ListView.builder(
+                padding: const EdgeInsets.all(10),
                 itemCount: state.hospitals.length,
                 itemBuilder: (context, index) {
                   final hospital = state.hospitals[index];
-                  return ListTile(
-                    leading:
-                        Image.network(hospital.logo, width: 50, height: 50),
-                    title: Text(hospital.name),
+                  return GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
@@ -37,6 +35,43 @@ class HospitalScreen extends StatelessWidget {
                         ),
                       );
                     },
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 10),
+                      height: 180,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        image: DecorationImage(
+                          image: NetworkImage(hospital.foto),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        alignment: Alignment.bottomLeft,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              hospital.name,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              hospital.direccion,
+                              style: const TextStyle(color: Colors.white70),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   );
                 },
               );
