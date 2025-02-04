@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
         final username = _emailController.text.trim();
         final password = _passwordController.text.trim();
 
-        // 🔹 Validar antes de enviar la solicitud
+        //  Validar antes de enviar la solicitud
         if (username.isEmpty || !username.contains('@')) {
           throw Exception("El usuario debe ser un email válido.");
         }
@@ -64,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
           throw Exception("La contraseña no puede estar vacía.");
         }
 
-        print("📧 Enviando login con usuario: '$username'");
+        print("Enviando login con usuario: '$username'");
         print(
             "🔑 Enviando password: '${password.isNotEmpty ? '***' : 'VACÍA'}'");
 
