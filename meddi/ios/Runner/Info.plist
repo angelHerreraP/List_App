@@ -45,5 +45,10 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Esta app necesita acceso a tu ubicación para mostrar hospitales cercanos.</string>
+    <key>GMSApiKey</key>
+    <string>AIzaSyB4qLjS_co4zSATrbZytVbZfJc2J8w3kl8</string>
+
 </dict>
 </plist>

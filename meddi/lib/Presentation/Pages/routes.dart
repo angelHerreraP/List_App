@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meddi/Presentation/Pages/hospital_screen.dart';
+import 'package:meddi/Presentation/Pages/hospitals_map.dart';
 
 class Routes extends StatelessWidget {
   final int index;
@@ -12,7 +13,7 @@ class Routes extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> myList = [
       HospitalScreen(), // Pantalla de Hospitales
-      const Center(child: Text('Pantalla de Mapa')), // Página de inicio
+      HospitalesMapa(), // Página de inicio
       const Center(child: Text('Pantalla de Contacto')), // Pantalla de Contacto
     ];
     return myList[index];

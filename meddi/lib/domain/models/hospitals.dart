@@ -26,6 +26,12 @@ class Hospital {
   });
 
   factory Hospital.fromJson(Map<String, dynamic> json) {
+    List<dynamic>? coordinates = json["location"]?["coordinates"];
+
+    if (coordinates == null || coordinates.length < 2) {
+      throw Exception("Error: No se encontraron coordenadas en la API.");
+    }
+
     return Hospital(
       id: json["_id"],
       name: json["name"],
@@ -36,8 +42,8 @@ class Hospital {
       telefono: json["telefono"] ?? "No disponible",
       horario: json["horario"] ?? "No especificado",
       municipio: json["municipio"] ?? "No disponible",
-      latitud: json["location"]["coordinates"][1].toDouble(),
-      longitud: json["location"]["coordinates"][0].toDouble(),
+      latitud: coordinates[1].toDouble(),
+      longitud: coordinates[0].toDouble(),
     );
   }
 }
